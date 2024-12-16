@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    Rigidbody _rb;
+    Rigidbody2D _rb;
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate()

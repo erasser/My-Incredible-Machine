@@ -1,24 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class GameController : MonoBehaviour
 {
     public List<GameObject> objectsPrefabs = new();
     bool _dragging;
     GameObject _draggedObject;
-    Rigidbody _draggedObjectRb;
-    Transform _draggedObjectTransform;
+    Rigidbody2D _draggedObjectRb;
     Camera _camera;
     Transform _cameraTransform;
     public LayerMask raycastPlaneLayerMask;
     public LayerMask draggableLayerMask;
-    Vector3 _draggingOffset;  // offset between cursor and dragged object
+    Vector3 _draggingOffset;
+    public static Text InfoText;
 
     void Start()
     {
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
-        // _raycastPlaneMask = LayerMask.NameToLayer("raycast plane");
+        InfoText = GameObject.Find("InfoText").GetComponent<Text>();
+        // Time.timeScale = 2;
     }
 
     void Update()
@@ -44,6 +46,14 @@ public class NewBehaviourScript : MonoBehaviour
             if (_draggedObject && !_draggedObjectRb.isKinematic)
                 _draggedObjectRb.velocity = Vector3.zero;
         }
+
+        if (Input.GetKeyDown(KeyCode.KeypadMinus))
+            Time.timeScale -= .2f;
+        else if (Input.GetKeyDown(KeyCode.KeypadPlus))
+            Time.timeScale += .2f;
+        else if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            Time.timeScale = 0;
+
     }
 
     void CreateInstance(int i)
@@ -58,57 +68,29 @@ public class NewBehaviourScript : MonoBehaviour
 
         Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, 100, raycastPlaneLayerMask);
 
-        // _draggedObjectTransform.position = hit.point + _draggingOffset;
-        // Physics.SyncTransforms();
         _draggedObjectRb.position = hit.point + _draggingOffset;
     }
 
     void ProcessClick()
     {
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
-        
+
         if (Physics.Raycast(ray, out var hitObject, 100, draggableLayerMask))
         {
-            Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hitPlane, 100, raycastPlaneLayerMask);
-
-            // _draggedObject = hitObject.collider.gameObject;
-            // _draggedObjectTransform = _draggedObject.transform;
-            // _draggingOffset = _draggedObjectTransform.position - hitPlane.point;
-            // _dragging = true;
-            // _draggedObjectRb = _draggedObject.GetComponent<Rigidbody>();
-
-            SetDraggedObject(hitObject.collider.gameObject, hitObject.collider.gameObject.transform.position - hitPlane.point);
+            Physics.Raycast(ray, out var hitPlane, 100, raycastPlaneLayerMask);
+        
+            var obj = hitObject.collider.gameObject;
+        
+            SetDraggedObject(obj, obj.transform.position - hitPlane.point);
         }
-
     }
 
     void SetDraggedObject(GameObject obj, Vector3 offset)
     {
         _draggedObject = obj;
-        _draggedObjectTransform = _draggedObject.transform;
         _draggingOffset = offset;
+        _draggedObjectRb = _draggedObject.transform.parent.GetComponent<Rigidbody2D>();
         _dragging = true;
-        _draggedObjectRb = _draggedObject.GetComponent<Rigidbody>();
-    }
-
-    void SetDraggedObjectx(GameObject o)
-    {
-        _draggedObject = o;
-        _draggedObjectTransform = _draggedObject.transform;
-        _draggingOffset = Vector3.zero;
-        _dragging = true;
-        _draggedObjectRb = _draggedObject.GetComponent<Rigidbody>();
-    }
-    
-    void SetDraggedObjecty(RaycastHit hit)
-    {
-        _draggedObject = hit.collider.gameObject;
-        _draggedObjectTransform = _draggedObject.transform;
-        // _draggingOffset = _draggedObjectTransform.position - hit.point;
-        _dragging = true;
-        _draggedObjectRb = _draggedObject.GetComponent<Rigidbody>();
-
-        // SetDraggedObject(hit.collider.gameObject);
     }
 
 }
