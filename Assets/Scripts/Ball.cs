@@ -1,4 +1,5 @@
 using UnityEngine;
+// TODO: Max speed (cca 40)
 
 public class Ball : MonoBehaviour
 {
@@ -9,9 +10,4 @@ public class Ball : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    void FixedUpdate()
-    {
-        if (_rb.IsSleeping())
-            _rb.WakeUp();
-    }
 }

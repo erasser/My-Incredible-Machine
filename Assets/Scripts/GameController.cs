@@ -14,13 +14,15 @@ public class GameController : MonoBehaviour
     public LayerMask draggableLayerMask;
     Vector3 _draggingOffset;
     public static Text InfoText;
+    // public static float MaxSpeed = 40;
+    Transform _trampolineTransform;
 
     void Start()
     {
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
-        // Time.timeScale = 2;
+        _trampolineTransform = transform.Find("trampoline").transform;
     }
 
     void Update()
@@ -36,6 +38,10 @@ public class GameController : MonoBehaviour
             CreateInstance(0);
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             CreateInstance(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            CreateInstance(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+            CreateInstance(3);
 
         if (Input.GetMouseButtonDown(0))
             ProcessClick();
@@ -66,14 +72,15 @@ public class GameController : MonoBehaviour
         if (!_dragging)
             return;
 
-        Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, 100, raycastPlaneLayerMask);
+        Physics.Raycast(GetMouseRay(), out var hit, 100, raycastPlaneLayerMask);
 
         _draggedObjectRb.position = hit.point + _draggingOffset;
+        _trampolineTransform.localPosition = Vector3.zero;
     }
 
     void ProcessClick()
     {
-        var ray = _camera.ScreenPointToRay(Input.mousePosition);
+        var ray = GetMouseRay();
 
         if (Physics.Raycast(ray, out var hitObject, 100, draggableLayerMask))
         {
@@ -85,8 +92,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    Ray GetMouseRay()
+    {
+        return _camera.ScreenPointToRay(Input.mousePosition);
+    }
+
     void SetDraggedObject(GameObject obj, Vector3 offset)
     {
+        print(obj.name);
         _draggedObject = obj;
         _draggingOffset = offset;
         _draggedObjectRb = _draggedObject.transform.parent.GetComponent<Rigidbody2D>();
