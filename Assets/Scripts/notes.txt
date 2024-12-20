@@ -1,0 +1,6 @@
+﻿ten posun pásu staticky?
+zkusit udelat zpomaleni na trampoline
+zkusit smoothnout ten ProcessPull
+wind
+Měl bych přidat možnost disblovat drag, když je objekt právě pullován
+Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag nebo pull)

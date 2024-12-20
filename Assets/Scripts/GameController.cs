@@ -5,24 +5,24 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public List<GameObject> objectsPrefabs = new();
-    bool _dragging;
-    GameObject _draggedObject;
-    Rigidbody2D _draggedObjectRb;
-    Camera _camera;
-    Transform _cameraTransform;
+    public static bool Dragging;
+    public static GameObject DraggedObject;
+    static Rigidbody2D _draggedObjectRb;
+    static Camera _camera;
+    static Transform _cameraTransform;
     public LayerMask raycastPlaneLayerMask;
     public LayerMask draggableLayerMask;
-    Vector3 _draggingOffset;
+    static Vector3 _draggingOffset;
     public static Text InfoText;
     // public static float MaxSpeed = 40;
-    Transform _trampolineTransform;
+    Transform _trampolineTransform;  // TODO: To by bylo hezký dát do Trampoline.cs. Jak to vůbec může fungovat pro víc trampolín?!?!
 
     void Start()
     {
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
-        _trampolineTransform = transform.Find("trampoline").transform;
+        _trampolineTransform = GameObject.Find("trampoline").transform;
     }
 
     void Update()
@@ -47,11 +47,7 @@ public class GameController : MonoBehaviour
             ProcessClick();
 
         if (Input.GetMouseButtonUp(0))
-        {
-            _dragging = false;
-            if (_draggedObject && !_draggedObjectRb.isKinematic)
-                _draggedObjectRb.velocity = Vector3.zero;
-        }
+            PlaceDraggedObject();
 
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
             Time.timeScale -= .2f;
@@ -59,17 +55,18 @@ public class GameController : MonoBehaviour
             Time.timeScale += .2f;
         else if (Input.GetKeyDown(KeyCode.KeypadEnter))
             Time.timeScale = 0;
-
     }
 
     void CreateInstance(int i)
     {
-         SetDraggedObject(Instantiate(objectsPrefabs[i]), Vector3.zero);
+        var a = Instantiate(objectsPrefabs[i]);
+
+         SetDraggedObject(a, Vector3.zero);
     }
 
     void MoveObject()
     {
-        if (!_dragging)
+        if (!Dragging)
             return;
 
         Physics.Raycast(GetMouseRay(), out var hit, 100, raycastPlaneLayerMask);
@@ -85,10 +82,10 @@ public class GameController : MonoBehaviour
         if (Physics.Raycast(ray, out var hitObject, 100, draggableLayerMask))
         {
             Physics.Raycast(ray, out var hitPlane, 100, raycastPlaneLayerMask);
-        
-            var obj = hitObject.collider.gameObject;
-        
-            SetDraggedObject(obj, obj.transform.position - hitPlane.point);
+
+            var objTransform = hitObject.collider.gameObject.transform;
+
+            SetDraggedObject(objTransform.parent.gameObject, objTransform.position - hitPlane.point);
         }
     }
 
@@ -99,11 +96,23 @@ public class GameController : MonoBehaviour
 
     void SetDraggedObject(GameObject obj, Vector3 offset)
     {
-        print(obj.name);
-        _draggedObject = obj;
+        DraggedObject = obj;
         _draggingOffset = offset;
-        _draggedObjectRb = _draggedObject.transform.parent.GetComponent<Rigidbody2D>();
-        _dragging = true;
+        _draggedObjectRb = DraggedObject.GetComponent<Rigidbody2D>();
+        Dragging = true;
+    }
+
+    void PlaceDraggedObject()
+    {
+        if (!DraggedObject)
+            return;
+
+        Dragging = false;
+
+        if (!_draggedObjectRb.isKinematic)
+            _draggedObjectRb.velocity = Vector3.zero;
+
+        _draggedObjectRb.transform.Find("raycast collider").GetComponent<RaycastCollider>().CheckOverlap();
     }
 
 }

@@ -11,6 +11,7 @@ public class Trampoline : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
+    // TODO: Aplikovat pouze na míče/pohybující se věci
     void OnTriggerEnter2D(Collider2D col)
     {
         _rb.velocity = Vector2.zero;
@@ -18,7 +19,8 @@ public class Trampoline : MonoBehaviour
         var tr = transform;
         var dot = Vector2.Dot(rb.velocity.normalized, tr.up);
 
-        if (dot < 0)
-            rb.velocity = Vector2.Reflect(rb.velocity * speedMultiplier, tr.up);
+        var spd = dot < 0 ? speedMultiplier : .5f;
+
+        rb.velocity = Vector2.Reflect(rb.velocity * spd, tr.up);
     }
 }
