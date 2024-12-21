@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController Gc;
     public List<GameObject> objectsPrefabs = new();
     public static bool Dragging;
     public static GameObject DraggedObject;
@@ -15,14 +16,16 @@ public class GameController : MonoBehaviour
     static Vector3 _draggingOffset;
     public static Text InfoText;
     // public static float MaxSpeed = 40;
-    Transform _trampolineTransform;  // TODO: To by bylo hezký dát do Trampoline.cs. Jak to vůbec může fungovat pro víc trampolín?!?!
+
+    // public Transform dummy1Transform;
+    // public Transform dummy2Transform;
 
     void Start()
     {
+        Gc = this;
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
-        _trampolineTransform = GameObject.Find("trampoline").transform;
     }
 
     void Update()
@@ -72,7 +75,6 @@ public class GameController : MonoBehaviour
         Physics.Raycast(GetMouseRay(), out var hit, 100, raycastPlaneLayerMask);
 
         _draggedObjectRb.position = hit.point + _draggingOffset;
-        _trampolineTransform.localPosition = Vector3.zero;
     }
 
     void ProcessClick()
@@ -112,7 +114,7 @@ public class GameController : MonoBehaviour
         if (!_draggedObjectRb.isKinematic)
             _draggedObjectRb.velocity = Vector3.zero;
 
-        _draggedObjectRb.transform.Find("raycast collider").GetComponent<RaycastCollider>().CheckOverlap();
+        _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
     }
 
 }

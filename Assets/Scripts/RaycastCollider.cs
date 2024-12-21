@@ -27,17 +27,20 @@ public class RaycastCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        print("Triggered: " + _parent.name);
+        if (!IsDragged())
+            return;
+        
+        print("Dragged and triggered: " + _parent.name);
+
         _overlappingObject = other.gameObject;
         _isOverlapping = true;
-
-        if (IsDragged())
-            _outline.enabled = true;
+        _outline.enabled = true;
     }
 
     void OnTriggerExit(Collider other)
     {
         _isOverlapping = false;
-
         _outline.enabled = false;
     }
 
@@ -47,16 +50,14 @@ public class RaycastCollider : MonoBehaviour
             return;
 
         // Start pushing
-        var dir = transform.position - _overlappingObject.transform.position;
+        var dir = _parent.transform.position - _overlappingObject.transform.position;
         _pushDirection = new(dir.x, dir.y);
     }
 
     void ProcessPull()
     {
-        if (!_isOverlapping || IsDragged())
-            return;
-
-        _rbTransform.Translate(Time.fixedDeltaTime * 30 * _pushDirection.normalized);
+        if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
+            _rbTransform.Translate(Time.fixedDeltaTime * 30 * _pushDirection.normalized, Space.World);
     }
 
     void PrepareOutline()
@@ -70,6 +71,11 @@ public class RaycastCollider : MonoBehaviour
 
     bool IsDragged()
     {
-        return Dragging && DraggedObject == _parent;
+        return Dragging && IsThisDraggedObject();
+    }
+
+    bool IsThisDraggedObject()
+    {
+        return DraggedObject == _parent;
     }
 }
