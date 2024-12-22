@@ -27,11 +27,8 @@ public class RaycastCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        print("Triggered: " + _parent.name);
         if (!IsDragged())
             return;
-        
-        print("Dragged and triggered: " + _parent.name);
 
         _overlappingObject = other.gameObject;
         _isOverlapping = true;
@@ -50,14 +47,13 @@ public class RaycastCollider : MonoBehaviour
             return;
 
         // Start pushing
-        var dir = _parent.transform.position - _overlappingObject.transform.position;
-        _pushDirection = new(dir.x, dir.y);
+        _pushDirection = _parent.transform.position - _overlappingObject.transform.position;
     }
 
     void ProcessPull()
     {
         if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
-            _rbTransform.Translate(Time.fixedDeltaTime * 30 * _pushDirection.normalized, Space.World);
+            _rbTransform.Translate(Time.fixedDeltaTime * 10 * _pushDirection.normalized, Space.World);
     }
 
     void PrepareOutline()

@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public LayerMask draggableLayerMask;
     static Vector3 _draggingOffset;
     public static Text InfoText;
+    public static List<Rigidbody2D> BallsRigidbodies = new();
     // public static float MaxSpeed = 40;
 
     // public Transform dummy1Transform;
@@ -26,6 +27,7 @@ public class GameController : MonoBehaviour
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
+        CreateBallsList();
     }
 
     void Update()
@@ -115,6 +117,14 @@ public class GameController : MonoBehaviour
             _draggedObjectRb.velocity = Vector3.zero;
 
         _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
+    }
+
+    void CreateBallsList()
+    {
+        var balls = GameObject.FindGameObjectsWithTag("ball");
+
+        foreach (GameObject ball in balls)
+            BallsRigidbodies.Add(ball.GetComponent<Rigidbody2D>());
     }
 
 }
