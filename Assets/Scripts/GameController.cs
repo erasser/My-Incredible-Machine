@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
     public static GameController Gc;
     public List<GameObject> objectsPrefabs = new();
     public static bool Dragging;
-    public static GameObject DraggedObject;
+    public static Part DraggedObject;
     static Rigidbody2D _draggedObjectRb;
     static Camera _camera;
     static Transform _cameraTransform;
@@ -15,7 +15,9 @@ public class GameController : MonoBehaviour
     public LayerMask draggableLayerMask;
     static Vector3 _draggingOffset;
     public static Text InfoText;
-    public static List<Rigidbody2D> BallsRigidbodies = new();
+    public static readonly List<Rigidbody2D> BallsRigidbodies2D = new();
+    public static Part SelectedPart;
+    Vector2 _lastOnObjectClickCoordinates;
     // public static float MaxSpeed = 40;
 
     // public Transform dummy1Transform;
@@ -47,12 +49,18 @@ public class GameController : MonoBehaviour
             CreateInstance(2);
         else if (Input.GetKeyDown(KeyCode.Alpha4))
             CreateInstance(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+            CreateInstance(4);
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+            CreateInstance(5);
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+            CreateInstance(6);
 
         if (Input.GetMouseButtonDown(0))
             ProcessClick();
 
         if (Input.GetMouseButtonUp(0))
-            PlaceDraggedObject();
+            ProcessTouchReleased();
 
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
             Time.timeScale -= .2f;
@@ -64,9 +72,12 @@ public class GameController : MonoBehaviour
 
     void CreateInstance(int i)
     {
-        var a = Instantiate(objectsPrefabs[i]);
+        var part = Instantiate(objectsPrefabs[i]);
 
-         SetDraggedObject(a, Vector3.zero);
+        if (part.CompareTag("ball"))
+            BallsRigidbodies2D.Add(part.GetComponent<Rigidbody2D>());            
+
+        SetDraggedObject(part.GetComponent<Part>(), Vector3.zero);
     }
 
     void MoveObject()
@@ -89,24 +100,15 @@ public class GameController : MonoBehaviour
 
             var objTransform = hitObject.collider.gameObject.transform;
 
-            SetDraggedObject(objTransform.parent.gameObject, objTransform.position - hitPlane.point);
+            SetDraggedObject(objTransform.parent.GetComponent<Part>(), objTransform.position - hitPlane.point);
+
+            _lastOnObjectClickCoordinates = Input.mousePosition;
         }
+        else
+            ClearSelection();
     }
 
-    Ray GetMouseRay()
-    {
-        return _camera.ScreenPointToRay(Input.mousePosition);
-    }
-
-    void SetDraggedObject(GameObject obj, Vector3 offset)
-    {
-        DraggedObject = obj;
-        _draggingOffset = offset;
-        _draggedObjectRb = DraggedObject.GetComponent<Rigidbody2D>();
-        Dragging = true;
-    }
-
-    void PlaceDraggedObject()
+    void ProcessTouchReleased()
     {
         if (!DraggedObject)
             return;
@@ -114,9 +116,26 @@ public class GameController : MonoBehaviour
         Dragging = false;
 
         if (!_draggedObjectRb.isKinematic)
+        {
             _draggedObjectRb.velocity = Vector3.zero;
+            print("velocity zeroed");
+        }
 
         _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
+    }
+
+    Ray GetMouseRay()
+    {
+        return _camera.ScreenPointToRay(Input.mousePosition);
+    }
+
+    void SetDraggedObject(Part part, Vector3 offset)
+    {
+        DraggedObject = part;
+        _draggingOffset = offset;
+        _draggedObjectRb = DraggedObject.GetComponent<Rigidbody2D>();
+        Dragging = true;
+        SelectPart(part);
     }
 
     void CreateBallsList()
@@ -124,7 +143,23 @@ public class GameController : MonoBehaviour
         var balls = GameObject.FindGameObjectsWithTag("ball");
 
         foreach (GameObject ball in balls)
-            BallsRigidbodies.Add(ball.GetComponent<Rigidbody2D>());
+            BallsRigidbodies2D.Add(ball.GetComponent<Rigidbody2D>());
+    }
+
+    public static void SelectPart(Part part)
+    {
+        ClearSelection();
+        SelectedPart = part;
+        part.ToggleSelectionEffect(true);
+    }
+
+    public static void ClearSelection()
+    {
+        if (!SelectedPart)
+            return;
+
+        SelectedPart.ToggleSelectionEffect(false);
+        SelectedPart = null;
     }
 
 }

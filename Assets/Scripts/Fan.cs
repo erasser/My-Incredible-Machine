@@ -25,13 +25,10 @@ public class Fan : MonoBehaviour
 
     void FixedUpdate()
     {
-        foreach (Rigidbody2D ballRb2D in BallsRigidbodies)
+        foreach (Rigidbody2D ballRb2D in BallsRigidbodies2D)
         {
             Vector2 toBallDirection = ballRb2D.transform.position - fanRotatorTransform.position;
             var dot = Vector2.Dot(_fanForward, toBallDirection.normalized);
-
-            Debug.DrawRay(fanRotatorTransform.position, toBallDirection, Color.magenta);
-
             var dotCoefficient = Map(dot, _dotThreshold, 1, 0, 1);
 
             if (dotCoefficient > 0)

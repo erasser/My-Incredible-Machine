@@ -9,15 +9,12 @@ public class RaycastCollider : MonoBehaviour
     Vector2 _pushDirection;
     GameObject _overlappingObject;
     Transform _rbTransform;
-    Outline _outline;
-    GameObject _parent;
+    Part _part;
 
     void Start()
     {
-        _parent = transform.parent.gameObject;
-        _rbTransform = _parent.GetComponent<Rigidbody2D>().transform;
-
-        PrepareOutline();
+        _part = transform.parent.GetComponent<Part>();
+        _rbTransform = _part.GetComponent<Rigidbody2D>().transform;
     }
 
     void FixedUpdate()
@@ -32,13 +29,18 @@ public class RaycastCollider : MonoBehaviour
 
         _overlappingObject = other.gameObject;
         _isOverlapping = true;
-        _outline.enabled = true;
+        _part.ToggleCollisionEffect(true);
     }
 
     void OnTriggerExit(Collider other)
     {
         _isOverlapping = false;
-        _outline.enabled = false;
+
+        if (IsSelected())
+        {
+            _part.ToggleCollisionEffect(false);
+            _part.ToggleSelectionEffect(true);
+        }
     }
 
     public void CheckOverlap()
@@ -47,22 +49,13 @@ public class RaycastCollider : MonoBehaviour
             return;
 
         // Start pushing
-        _pushDirection = _parent.transform.position - _overlappingObject.transform.position;
+        _pushDirection = _part.transform.position - _overlappingObject.transform.position;
     }
 
     void ProcessPull()
     {
         if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
             _rbTransform.Translate(Time.fixedDeltaTime * 10 * _pushDirection.normalized, Space.World);
-    }
-
-    void PrepareOutline()
-    {
-        _outline = _parent.AddComponent<Outline>();
-        _outline.OutlineMode = Outline.Mode.OutlineAll;
-        _outline.OutlineColor = Color.red;
-        _outline.OutlineWidth = 3;
-        _outline.enabled = false;
     }
 
     bool IsDragged()
@@ -72,6 +65,11 @@ public class RaycastCollider : MonoBehaviour
 
     bool IsThisDraggedObject()
     {
-        return DraggedObject == _parent;
+        return DraggedObject == _part;
+    }
+
+    bool IsSelected()
+    {
+        return SelectedPart == _part;
     }
 }
