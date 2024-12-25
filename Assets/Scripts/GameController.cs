@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -104,22 +105,19 @@ public class GameController : MonoBehaviour
 
             _lastOnObjectClickCoordinates = Input.mousePosition;
         }
-        else
+        else if (!EventSystem.current.IsPointerOverGameObject())
             ClearSelection();
     }
 
     void ProcessTouchReleased()
     {
-        if (!DraggedObject)
+        if (!Dragging)
             return;
 
         Dragging = false;
 
         if (!_draggedObjectRb.isKinematic)
-        {
             _draggedObjectRb.velocity = Vector3.zero;
-            print("velocity zeroed");
-        }
 
         _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
     }

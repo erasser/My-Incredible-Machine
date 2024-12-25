@@ -19,7 +19,7 @@ public class RaycastCollider : MonoBehaviour
 
     void FixedUpdate()
     {
-        ProcessPull();
+        ProcessPush();
     }
 
     void OnTriggerEnter(Collider other)
@@ -50,9 +50,11 @@ public class RaycastCollider : MonoBehaviour
 
         // Start pushing
         _pushDirection = _part.transform.position - _overlappingObject.transform.position;
+
+        // _pushDirection = Mathf.Abs(_pushDirection.x) < Mathf.Abs(_pushDirection.y) ? _pushDirection.x * Vector2.right : _pushDirection.y * Vector2.up;
     }
 
-    void ProcessPull()
+    void ProcessPush()
     {
         if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
             _rbTransform.Translate(Time.fixedDeltaTime * 10 * _pushDirection.normalized, Space.World);
