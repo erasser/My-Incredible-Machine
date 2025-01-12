@@ -19,8 +19,11 @@ public class GameController : MonoBehaviour
     public static readonly List<Rigidbody2D> BallsRigidbodies2D = new();
     public static Part SelectedPart;
     Vector2 _lastOnObjectClickCoordinates;
-    // public static float MaxSpeed = 40;
+    public UiButtonRotate buttonRotate;
+    public UiButtonFlip buttonFlip;
+    public UiButtonDelete buttonDelete;
 
+    // public static float MaxSpeed = 40;
     // public Transform dummy1Transform;
     // public Transform dummy2Transform;
 
@@ -30,7 +33,10 @@ public class GameController : MonoBehaviour
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
+
         CreateBallsList();
+
+        HideTransformButtons();
     }
 
     void Update()
@@ -149,6 +155,8 @@ public class GameController : MonoBehaviour
         ClearSelection();
         SelectedPart = part;
         part.ToggleSelectionEffect(true);
+
+        ShowUiButtons();
     }
 
     public static void ClearSelection()
@@ -158,6 +166,26 @@ public class GameController : MonoBehaviour
 
         SelectedPart.ToggleSelectionEffect(false);
         SelectedPart = null;
+
+        HideTransformButtons();
+    }
+
+    static void ShowUiButtons()
+    {
+        if (SelectedPart.rotationStep != 0)
+            Gc.buttonRotate.gameObject.SetActive(true);
+
+        if (SelectedPart.canBeFlipped)
+            Gc.buttonFlip.gameObject.SetActive(true);
+
+        Gc.buttonDelete.gameObject.SetActive(true);
+    }
+
+    static void HideTransformButtons()
+    {
+        Gc.buttonRotate.gameObject.SetActive(false);
+        Gc.buttonFlip.gameObject.SetActive(false);
+        Gc.buttonDelete.gameObject.SetActive(false);
     }
 
 }

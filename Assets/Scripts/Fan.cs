@@ -9,12 +9,10 @@ public class Fan : MonoBehaviour
     public float fanPower = 2000;
     [Range(0, 90)]
     public float fanConeAngle = 45; 
-    Vector2 _fanForward;
     float _dotThreshold;
 
     void Start()
     {
-        _fanForward = - fanRotatorTransform.forward;
         _dotThreshold = Mathf.Cos(fanConeAngle * Mathf.Deg2Rad / 2);
     }
 
@@ -28,7 +26,7 @@ public class Fan : MonoBehaviour
         foreach (Rigidbody2D ballRb2D in BallsRigidbodies2D)
         {
             Vector2 toBallDirection = ballRb2D.transform.position - fanRotatorTransform.position;
-            var dot = Vector2.Dot(_fanForward, toBallDirection.normalized);
+            var dot = Vector2.Dot(- fanRotatorTransform.forward, toBallDirection.normalized);
             var dotCoefficient = Map(dot, _dotThreshold, 1, 0, 1);
 
             if (dotCoefficient > 0)

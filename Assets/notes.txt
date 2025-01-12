@@ -1,4 +1,5 @@
-﻿ten posun pásu staticky?
+﻿Rotací se part může dostat do kolize
+ten posun pásu staticky?
 zkusit udelat zpomaleni na trampoline
 zkusit smoothnout ten ProcessPull
 wind
