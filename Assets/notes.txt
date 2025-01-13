@@ -1,7 +1,9 @@
-﻿Rotací se part může dostat do kolize
+﻿Snap to grid?
+Rotací se part může dostat do kolize. Asi bych to moje vypushování mohl nahradit nemožností spustit play.
 ten posun pásu staticky?
-zkusit udelat zpomaleni na trampoline
-zkusit smoothnout ten ProcessPull
+zkusit udelat zpomaleni na trampoline  - tím jsem myslel prohnutí
+zkusit smoothnout ten ProcessPull - spíš to zrušim úplně
+Měl bych přidat možnost disblovat drag, když je objekt právě pullován - spíš to zrušim úplně
+Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag nebo pull) - spíš to zrušim úplně
 wind
-Měl bych přidat možnost disblovat drag, když je objekt právě pullován
-Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag nebo pull)
+Vody by mohla dělat bublinky za objektem, co do ní spadne.
