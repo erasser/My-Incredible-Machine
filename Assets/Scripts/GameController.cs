@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,8 +13,10 @@ public class GameController : MonoBehaviour
     static Rigidbody2D _draggedObjectRb;
     static Camera _camera;
     static Transform _cameraTransform;
+    static Camera _cameraUi3D;
     public LayerMask raycastPlaneLayerMask;
     public LayerMask draggableLayerMask;
+    public LayerMask ui3DLayerMask;
     static Vector3 _draggingOffset;
     public static Text InfoText;
     public static readonly List<Rigidbody2D> BallsRigidbodies2D = new();
@@ -22,21 +25,24 @@ public class GameController : MonoBehaviour
     public UiButtonRotate buttonRotate;
     public UiButtonFlip buttonFlip;
     public UiButtonDelete buttonDelete;
-
-    // public static float MaxSpeed = 40;
-    // public Transform dummy1Transform;
-    // public Transform dummy2Transform;
+    Vector2 _menu3DStartingOffset = new(- 100, 50);
+    Vector2 _menu3DVerticalOffset = new(0, 15);
+    static Transform _ui3DTransform;
 
     void Start()
     {
         Gc = this;
         _cameraTransform = GameObject.Find("Main Camera").transform;
         _camera = _cameraTransform.GetComponent<Camera>();
+        _cameraUi3D = GameObject.Find("Camera UI 3D").GetComponent<Camera>();
+        _ui3DTransform = GameObject.Find("UI 3D").transform;
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
 
         CreateBallsList();
 
         HideTransformButtons();
+
+        // CreateMenu3DItems();
     }
 
     void Update()
@@ -64,7 +70,10 @@ public class GameController : MonoBehaviour
             CreateInstance(6);
 
         if (Input.GetMouseButtonDown(0))
-            ProcessClick();
+        {
+            ProcessMenu3DCast();
+            ProcessSceneCast();
+        }
 
         if (Input.GetMouseButtonUp(0))
             ProcessTouchReleased();
@@ -97,7 +106,15 @@ public class GameController : MonoBehaviour
         _draggedObjectRb.position = hit.point + _draggingOffset;
     }
 
-    void ProcessClick()
+    void ProcessMenu3DCast()
+    {
+        if (Physics.Raycast(_cameraUi3D.ScreenPointToRay(Input.mousePosition), out var hit, 100, ui3DLayerMask))
+        {
+            // instantiate
+        }
+    }
+
+    void ProcessSceneCast()
     {
         var ray = GetMouseRay();
 
@@ -186,6 +203,15 @@ public class GameController : MonoBehaviour
         Gc.buttonRotate.gameObject.SetActive(false);
         Gc.buttonFlip.gameObject.SetActive(false);
         Gc.buttonDelete.gameObject.SetActive(false);
+    }
+
+    void CreateMenu3DItems()
+    {
+        // foreach (GameObject prefab in objectsPrefabs)
+        for (int i = 0; i < objectsPrefabs.Count; ++i)
+        {
+            var item = Instantiate(objectsPrefabs[i], _menu3DStartingOffset + i * _menu3DVerticalOffset, objectsPrefabs[i].transform.rotation, _ui3DTransform);
+        }
     }
 
 }

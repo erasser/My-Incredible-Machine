@@ -8,18 +8,18 @@ public class RaycastCollider : MonoBehaviour
     bool _isOverlapping;
     Vector2 _pushDirection;
     GameObject _overlappingObject;
-    Transform _rbTransform;
+    // Transform _rbTransform;
     Part _part;
 
     void Start()
     {
         _part = transform.parent.GetComponent<Part>();
-        _rbTransform = _part.GetComponent<Rigidbody2D>().transform;
+        // _rbTransform = _part.GetComponent<Rigidbody2D>().transform;
     }
 
     void FixedUpdate()
     {
-        ProcessPush();
+        // ProcessPush();
     }
 
     void OnTriggerEnter(Collider other)
@@ -54,11 +54,11 @@ public class RaycastCollider : MonoBehaviour
         // _pushDirection = Mathf.Abs(_pushDirection.x) < Mathf.Abs(_pushDirection.y) ? _pushDirection.x * Vector2.right : _pushDirection.y * Vector2.up;
     }
 
-    void ProcessPush()
-    {
-        if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
-            _rbTransform.Translate(Time.fixedDeltaTime * 10 * _pushDirection.normalized, Space.World);
-    }
+    // void ProcessPush()
+    // {
+    //     if (_isOverlapping && !IsDragged() && IsThisDraggedObject())
+    //         _rbTransform.Translate(Time.fixedDeltaTime * 10 * _pushDirection.normalized, Space.World);
+    // }
 
     bool IsDragged()
     {

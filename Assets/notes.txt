@@ -5,5 +5,7 @@ zkusit udelat zpomaleni na trampoline  - tím jsem myslel prohnutí
 zkusit smoothnout ten ProcessPull - spíš to zrušim úplně
 Měl bych přidat možnost disblovat drag, když je objekt právě pullován - spíš to zrušim úplně
 Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag nebo pull) - spíš to zrušim úplně
+• Pokud ten push nechám zrušenej, doodstranit v RaycastCollider, co tam po něm zůstalo
 wind
 Vody by mohla dělat bublinky za objektem, co do ní spadne.
+• Maintaining original texture size while scaling objects: GetComponent<Renderer>().material.SetTextureScale("_MainTex",transform.localScale);
