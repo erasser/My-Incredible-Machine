@@ -150,10 +150,10 @@ public class GameController : MonoBehaviour
 
         Dragging = false;
 
-        if (!_draggedObjectRb.isKinematic)
-            _draggedObjectRb.velocity = Vector3.zero;
+        // if (!_draggedObjectRb.isKinematic)
+            // _draggedObjectRb.velocity = Vector3.zero;
 
-        _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
+        // _draggedObjectRb.transform.Find("raycast collider")?.GetComponent<RaycastCollider>()?.CheckOverlap();
     }
 
     Ray GetMouseRay()
