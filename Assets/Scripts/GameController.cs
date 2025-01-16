@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -30,6 +28,7 @@ public class GameController : MonoBehaviour
     float _menu3DVerticalOffset = 15;
     float _menu3DPartsScale = 5;
     static Transform _ui3DTransform;
+    public static readonly List<Part> PartsWithDynamicRigidBodies2D = new();
 
     void Start()
     {
@@ -62,21 +61,6 @@ public class GameController : MonoBehaviour
 
     void ProcessControls()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            CreateInstance(0);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            CreateInstance(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            CreateInstance(2);
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            CreateInstance(3);
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-            CreateInstance(4);
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-            CreateInstance(5);
-        else if (Input.GetKeyDown(KeyCode.Alpha7))
-            CreateInstance(6);
-
         if (Input.GetMouseButtonDown(0))
         {
             ProcessSceneCast();
@@ -94,35 +78,35 @@ public class GameController : MonoBehaviour
             Time.timeScale = 0;
     }
 
-    void CreateInstance(int i)
-    {
-        var part = Instantiate(menuObjectsPrefabs[i]);
-
-        if (part.CompareTag("ball"))
-            BallsRigidbodies2D.Add(part.GetComponent<Rigidbody2D>());            
-
-        SetDraggedObject(part.GetComponent<Part>(), Vector3.zero);
-    }
-
     void MoveObject()
     {
         if (!Dragging)
             return;
 
+        _draggedObjectRb.position = GetMouseCastHit().point + _draggingOffset;
+    }
+
+    RaycastHit GetMouseCastHit()
+    {
         Physics.Raycast(GetMouseRay(), out var hit, 100, raycastPlaneLayerMask);
 
-        _draggedObjectRb.position = hit.point + _draggingOffset;
+        return hit;
     }
 
     void ProcessMenu3DCast()
     {
         if (Physics.Raycast(_cameraUi3D.ScreenPointToRay(Input.mousePosition), out var hit, 100, _ui3DLayerMask))
-        {
-            // Create new part
-            var menuPart = hit.collider.transform.parent.GetComponent<Menu3DPart>().partPrefab;
-            var newPart = Instantiate(menuPart);
-            SetDraggedObject(newPart, Vector3.zero);
-        }
+            CreatePart(hit.collider.transform.parent.GetComponent<Menu3DPart>());
+    }
+
+    void CreatePart(Menu3DPart menuPart)
+    {
+        var newPart = Instantiate(menuPart.partPrefab, GetMouseCastHit().point, menuPart.partPrefab.transform.rotation);
+
+        if (newPart.CompareTag("ball"))
+            BallsRigidbodies2D.Add(newPart.GetComponent<Rigidbody2D>());            
+
+        SetDraggedObject(newPart, Vector3.zero);
     }
 
     void ProcessSceneCast()
@@ -131,11 +115,9 @@ public class GameController : MonoBehaviour
 
         if (Physics.Raycast(ray, out var hitObject, 100, draggableLayerMask))
         {
-            Physics.Raycast(ray, out var hitPlane, 100, raycastPlaneLayerMask);
-
             var objTransform = hitObject.collider.gameObject.transform;
 
-            SetDraggedObject(objTransform.parent.GetComponent<Part>(), objTransform.position - hitPlane.point);
+            SetDraggedObject(objTransform.parent.GetComponent<Part>(), objTransform.position - GetMouseCastHit().point);
 
             _lastOnObjectClickCoordinates = Input.mousePosition;
         }
@@ -225,12 +207,24 @@ public class GameController : MonoBehaviour
             var item = Instantiate(part, _ui3DTransform, false);
 
             item.transform.localPosition = pos;
-            // item.transform.rotation = Quaternion.Euler(- 15, 0, 0);
+            item.transform.rotation = Quaternion.Euler(0, - 30, 0);
             item.transform.localScale *= _menu3DPartsScale;
 
             item.layer = (int)Mathf.Log(_ui3DLayerMask.value, 2);
         }
+    }
 
+    // TODO: Hide the other button
+    public void StartWorldSimulation()
+    {
+        foreach (Part part in PartsWithDynamicRigidBodies2D)
+            part.StartSimulation();
+    }
+
+    public void StopWorldSimulation()
+    {
+        foreach (Part part in PartsWithDynamicRigidBodies2D)
+            part.StopSimulation();
     }
 
 }

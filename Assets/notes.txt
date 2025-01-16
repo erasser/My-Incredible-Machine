@@ -1,4 +1,6 @@
-﻿Snap to grid?
+﻿Vyřešit, když se do menu na item jen ťukne (a zůstane pod tím buttonem)
+Sjednotit buttony - u některých přiřazuji event scriptem, u některých v editoru. Nebo ne?
+Snap to grid?
 Rotací se part může dostat do kolize. Asi bych to moje vypushování mohl nahradit nemožností spustit play.
 ten posun pásu staticky?
 zkusit udelat zpomaleni na trampoline  - tím jsem myslel prohnutí
