@@ -13,9 +13,11 @@ GameObject:
   - component: {fileID: 9114519449954076145}
   - component: {fileID: 3696768702530450749}
   - component: {fileID: 2480068863891254768}
+  - component: {fileID: 7436026139742371737}
+  - component: {fileID: 8236320225259645009}
   m_Layer: 7
-  m_Name: part ball blue
-  m_TagString: Untagged
+  m_Name: part basket ball
+  m_TagString: ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,15 +29,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831972329128475519}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.4100003, y: 7.35, z: 0}
+  m_LocalRotation: {x: -0.30378017, y: 0.18598273, z: 0.060590986, w: 0.9324467}
+  m_LocalPosition: {x: -4.78, y: -0.6, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8288425246331712707}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -36.09, y: 22.56, z: 0}
 --- !u!33 &2338270078587486247
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -64,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e678a2f0b35a3ad4d96ee78c9004f1b9, type: 2}
+  - {fileID: 2100000, guid: 2f3f20b8ab861274a836bd186d146b97, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -98,11 +100,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 2
+  m_Mass: 1
   m_LinearDrag: 0.01
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 02c8fc443dde79e44af37e8dc909f0df, type: 2}
+  m_Material: {fileID: 6200000, guid: ef8df599f39407549908f4bb273124ce, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -123,7 +125,7 @@ CircleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 02c8fc443dde79e44af37e8dc909f0df, type: 2}
+  m_Material: {fileID: 6200000, guid: ef8df599f39407549908f4bb273124ce, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -149,6 +151,32 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &7436026139742371737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831972329128475519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35415ce8dc9701a4dab6568ad37197d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationStep: 0
+  canBeFlipped: 0
+--- !u!114 &8236320225259645009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831972329128475519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bec16569a9f0c94daa8ac42f8f9bf02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5391327067443550255
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,6 +187,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8288425246331712707}
   - component: {fileID: 968239748572735130}
+  - component: {fileID: 1522735083678712439}
   m_Layer: 7
   m_Name: raycast collider
   m_TagString: Untagged
@@ -202,3 +231,15 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1522735083678712439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5391327067443550255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca1d10bfd4a4254882d5a84bf85ecec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public static GameController Gc;
-    public List<GameObject> objectsPrefabs = new();
+    public List<GameObject> menuObjectsPrefabs;  // TODO: <Part>
     public static bool Dragging;
     public static Part DraggedObject;
     static Rigidbody2D _draggedObjectRb;
@@ -16,7 +17,7 @@ public class GameController : MonoBehaviour
     static Camera _cameraUi3D;
     public LayerMask raycastPlaneLayerMask;
     public LayerMask draggableLayerMask;
-    public LayerMask ui3DLayerMask;
+    LayerMask _ui3DLayerMask;
     static Vector3 _draggingOffset;
     public static Text InfoText;
     public static readonly List<Rigidbody2D> BallsRigidbodies2D = new();
@@ -25,8 +26,9 @@ public class GameController : MonoBehaviour
     public UiButtonRotate buttonRotate;
     public UiButtonFlip buttonFlip;
     public UiButtonDelete buttonDelete;
-    Vector2 _menu3DStartingOffset = new(- 100, 50);
-    Vector2 _menu3DVerticalOffset = new(0, 15);
+    Vector2 _menu3DStartingOffset = new(- 80, 40);
+    float _menu3DVerticalOffset = 15;
+    float _menu3DPartsScale = 5;
     static Transform _ui3DTransform;
 
     void Start()
@@ -36,13 +38,14 @@ public class GameController : MonoBehaviour
         _camera = _cameraTransform.GetComponent<Camera>();
         _cameraUi3D = GameObject.Find("Camera UI 3D").GetComponent<Camera>();
         _ui3DTransform = GameObject.Find("UI 3D").transform;
+        _ui3DLayerMask = 1 <<_ui3DTransform.gameObject.layer;
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
 
         CreateBallsList();
 
         HideTransformButtons();
 
-        // CreateMenu3DItems();
+        CreateMenu3DItems();
     }
 
     void Update()
@@ -50,6 +53,11 @@ public class GameController : MonoBehaviour
         ProcessControls();
 
         MoveObject();  // TODO: Move to fixed upd.
+
+        // var camX = (2500 - Screen.width) / 230f * 10;
+        // _cameraUi3D.transform.position = new(camX, _cameraUi3D.transform.position.y, _cameraUi3D.transform.position.z);
+
+        // InfoText.text = camX.ToString();
     }
 
     void ProcessControls()
@@ -71,8 +79,8 @@ public class GameController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            ProcessMenu3DCast();
             ProcessSceneCast();
+            ProcessMenu3DCast();
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -88,7 +96,7 @@ public class GameController : MonoBehaviour
 
     void CreateInstance(int i)
     {
-        var part = Instantiate(objectsPrefabs[i]);
+        var part = Instantiate(menuObjectsPrefabs[i]);
 
         if (part.CompareTag("ball"))
             BallsRigidbodies2D.Add(part.GetComponent<Rigidbody2D>());            
@@ -108,9 +116,12 @@ public class GameController : MonoBehaviour
 
     void ProcessMenu3DCast()
     {
-        if (Physics.Raycast(_cameraUi3D.ScreenPointToRay(Input.mousePosition), out var hit, 100, ui3DLayerMask))
+        if (Physics.Raycast(_cameraUi3D.ScreenPointToRay(Input.mousePosition), out var hit, 100, _ui3DLayerMask))
         {
-            // instantiate
+            // Create new part
+            var menuPart = hit.collider.transform.parent.GetComponent<Menu3DPart>().partPrefab;
+            var newPart = Instantiate(menuPart);
+            SetDraggedObject(newPart, Vector3.zero);
         }
     }
 
@@ -205,13 +216,21 @@ public class GameController : MonoBehaviour
         Gc.buttonDelete.gameObject.SetActive(false);
     }
 
-    void CreateMenu3DItems()
+    void CreateMenu3DItems()  // TODO: Bude jim to chtít dát Sphere collider
     {
-        // foreach (GameObject prefab in objectsPrefabs)
-        for (int i = 0; i < objectsPrefabs.Count; ++i)
+        for (int i = 0; i < menuObjectsPrefabs.Count; ++i)
         {
-            var item = Instantiate(objectsPrefabs[i], _menu3DStartingOffset + i * _menu3DVerticalOffset, objectsPrefabs[i].transform.rotation, _ui3DTransform);
+            var part = menuObjectsPrefabs[i].gameObject;
+            Vector3 pos = new(_menu3DStartingOffset.x, _menu3DStartingOffset.y - i * _menu3DVerticalOffset, 0);
+            var item = Instantiate(part, _ui3DTransform, false);
+
+            item.transform.localPosition = pos;
+            // item.transform.rotation = Quaternion.Euler(- 15, 0, 0);
+            item.transform.localScale *= _menu3DPartsScale;
+
+            item.layer = (int)Mathf.Log(_ui3DLayerMask.value, 2);
         }
+
     }
 
 }

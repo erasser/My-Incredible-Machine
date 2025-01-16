@@ -7,7 +7,7 @@ public class Part : MonoBehaviour
     public bool canBeFlipped;
     Outline _outline;
 
-    void Start()
+    void Awake()
     {
         PrepareOutline();
     }
@@ -18,6 +18,8 @@ public class Part : MonoBehaviour
         _outline.OutlineMode = Outline.Mode.OutlineAll;
         _outline.OutlineWidth = 3;
         _outline.enabled = false;
+        
+        // print("◘" + _outline + ", id: " + GetInstanceID());
     }
 
     public void ToggleCollisionEffect(bool enable)
@@ -30,6 +32,7 @@ public class Part : MonoBehaviour
     {
         _outline.OutlineColor = Color.green;
         _outline.enabled = enable;
+
     }
 
     public void Rotate()
