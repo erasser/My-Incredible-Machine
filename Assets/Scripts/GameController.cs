@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController Gc;
-    public List<GameObject> menuObjectsPrefabs;  // TODO: <Part>
+    public List<GameObject> menuObjectsPrefabs;
     public static bool Dragging;
     public static Part DraggedObject;
     static Rigidbody2D _draggedObjectRb;
@@ -24,8 +24,10 @@ public class GameController : MonoBehaviour
     public UiButtonRotate buttonRotate;
     public UiButtonFlip buttonFlip;
     public UiButtonDelete buttonDelete;
+    GameObject _uiButtonPlay;
+    GameObject _uiButtonStop;
     Vector2 _menu3DStartingOffset = new(- 80, 40);
-    float _menu3DVerticalOffset = 15;
+    float _menu3DVerticalOffset = 14;
     float _menu3DPartsScale = 5;
     static Transform _ui3DTransform;
     public static readonly List<Part> PartsWithDynamicRigidBodies2D = new();
@@ -39,6 +41,9 @@ public class GameController : MonoBehaviour
         _ui3DTransform = GameObject.Find("UI 3D").transform;
         _ui3DLayerMask = 1 <<_ui3DTransform.gameObject.layer;
         InfoText = GameObject.Find("InfoText").GetComponent<Text>();
+        _uiButtonPlay = GameObject.Find("button play");
+        _uiButtonStop = GameObject.Find("button stop");
+        _uiButtonStop.SetActive(false);
 
         CreateBallsList();
 
@@ -198,33 +203,38 @@ public class GameController : MonoBehaviour
         Gc.buttonDelete.gameObject.SetActive(false);
     }
 
-    void CreateMenu3DItems()  // TODO: Bude jim to chtít dát Sphere collider
+    void CreateMenu3DItems()  // TODO: Bude jim to chtít dát vhodnější collider (a nebo snad ani ne)
     {
         for (int i = 0; i < menuObjectsPrefabs.Count; ++i)
         {
-            var part = menuObjectsPrefabs[i].gameObject;
+            var part = menuObjectsPrefabs[i];
             Vector3 pos = new(_menu3DStartingOffset.x, _menu3DStartingOffset.y - i * _menu3DVerticalOffset, 0);
             var item = Instantiate(part, _ui3DTransform, false);
 
             item.transform.localPosition = pos;
-            item.transform.rotation = Quaternion.Euler(0, - 30, 0);
+            item.transform.rotation = part.transform.rotation * Quaternion.Euler(0, 30, 0);
             item.transform.localScale *= _menu3DPartsScale;
 
             item.layer = (int)Mathf.Log(_ui3DLayerMask.value, 2);
         }
     }
 
-    // TODO: Hide the other button
     public void StartWorldSimulation()
     {
         foreach (Part part in PartsWithDynamicRigidBodies2D)
             part.StartSimulation();
+        
+        _uiButtonPlay.SetActive(false);
+        _uiButtonStop.SetActive(true);
     }
 
     public void StopWorldSimulation()
     {
         foreach (Part part in PartsWithDynamicRigidBodies2D)
             part.StopSimulation();
+        
+        _uiButtonStop.SetActive(false);
+        _uiButtonPlay.SetActive(true);
     }
 
 }

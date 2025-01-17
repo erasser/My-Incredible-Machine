@@ -1,12 +1,15 @@
-﻿Vyřešit, když se do menu na item jen ťukne (a zůstane pod tím buttonem)
+﻿deterministic physics >:-[
+    https://github.com/wonderkiln/lockstep.io
+
+https://discussions.unity.com/t/matching-camera-viewport-to-screen-space-overlay-canvas/549244/3
+V edit režimu by se možná dala pauzovat simulace fyziky, pokud neni stisknutý tlačítko
+Vyřešit, když se do menu na item jen ťukne (a zůstane pod tím buttonem)
 Sjednotit buttony - u některých přiřazuji event scriptem, u některých v editoru. Nebo ne?
 Snap to grid?
 Rotací se part může dostat do kolize. Asi bych to moje vypushování mohl nahradit nemožností spustit play.
 ten posun pásu staticky?
 zkusit udelat zpomaleni na trampoline  - tím jsem myslel prohnutí
-zkusit smoothnout ten ProcessPull - spíš to zrušim úplně
-Měl bych přidat možnost disblovat drag, když je objekt právě pullován - spíš to zrušim úplně
-Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag nebo pull) - spíš to zrušim úplně
+Při ukládání dát pozor, aby se neukládalo, pokud je něco v pohybu (drag)
 • Pokud ten push nechám zrušenej, doodstranit v RaycastCollider, co tam po něm zůstalo
 wind
 Vody by mohla dělat bublinky za objektem, co do ní spadne.

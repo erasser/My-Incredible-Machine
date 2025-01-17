@@ -75,17 +75,17 @@ public class Part : MonoBehaviour
 
     public void StartSimulation()
     {
-        _rb2D.bodyType = RigidbodyType2D.Dynamic;
+        SaveStateBeforeSimulation();
 
-        RestoreStateBeforeSimulation();
+        _rb2D.bodyType = RigidbodyType2D.Dynamic;
     }
 
     public void StopSimulation()
     {
-        SaveStateBeforeSimulation(); // ---- to se musí jindy
-
         _rb2D.bodyType = RigidbodyType2D.Kinematic;
         _rb2D.velocity = Vector3.zero;
+
+        RestoreStateBeforeSimulation();
     }
 
     void SaveStateBeforeSimulation()
